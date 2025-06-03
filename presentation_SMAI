@@ -1,0 +1,423 @@
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{braket}
+\usepackage{mathtools}
+\usepackage{graphicx}
+%\usepackage{titling}
+%\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{siunitx}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage{mathtools}
+\usepackage{amsfonts}
+\usepackage{animate}
+%\setbeamertemplate{caption}[numbered]
+\beamertemplatenavigationsymbolsempty
+%\setbeamercolor{block title alerted}{fg=white,bg=blue!70!black}
+%\setbeamercolor{block body alerted}{bg=blue!10!white}
+
+
+\usetheme{Madrid}
+\usecolortheme{default}
+\setbeamersize{text margin left=10mm,text margin right=10mm} 
+%------------------------------------------------------------
+%This block of code defines the information to appear in the
+%Title page
+\title[] %optional
+{Control of collision orbits}
+
+\author[Daluiso, Riccardo] % (optional)
+{Riccardo Daluiso\inst{1},
+ Jean-Baptiste Caillau, Alain Albouy}
+
+\institute[Université Côte d'Azur] % (optional)
+{
+  \inst{1}
+  Université Côte d'Azur
+}
+
+
+%\titlegraphic{
+%\includegraphics[width=0.15\textwidth]{logo.png}
+%}
+
+%\date[Sep. 2024] % (optional)
+{ }
+
+%End of title page configuration block
+%------------------------------------------------------------
+
+
+
+%------------------------------------------------------------
+%The next block of commands puts the table of contents at the 
+%beginning of each section and highlights the current section:
+
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+%------------------------------------------------------------
+
+
+\begin{document}
+
+%The next statement creates the title page.
+\frame{\titlepage
+\begin{center}
+\begin{tikzpicture}
+
+  % Segmento orizzontale
+  \draw[thick] (0,0) -- (7,0);
+
+  % Sole: pallino giallo su un punto del segmento
+  \filldraw[yellow,draw=black] (0.5,0) circle (0.3);
+
+  % Razzo stilizzato, orizzontale e centrato verticalmente sul segmento
+  \begin{scope}[shift={(6,0)}] % il razzo parte da x=6
+    % Corpo rettangolare centrato sul segmento (da y = -0.2 a 0.2)
+    \draw[fill=gray!30] (0,-0.2) -- (0,0.2) -- (-1.2,0.2) -- (-1.2,-0.2) -- cycle;
+    
+    % Punta (la punta finisce esattamente sul segmento)
+    \draw[fill=red!70] (-1.2,-0.2) -- (-1.6,0) -- (-1.2,0.2) -- cycle;
+    
+    % Ali superiori e inferiori
+    \draw[fill=blue!50] (0,0.2) -- (0.3,0.4) -- (-0.2,0.2) -- cycle;
+    \draw[fill=blue!50] (0,-0.2) -- (0.3,-0.4) -- (-0.2,-0.2) -- cycle;
+    
+    % Fiamma
+    \draw[fill=orange] (0.2,-0.1) -- (0.5,0) -- (0.2,0.1) -- cycle;
+  \end{scope}
+
+\end{tikzpicture}
+\end{center}
+}
+
+
+%---------------------------------------------------------
+%the title page
+\begin{frame}
+\frametitle{Table of Contents}
+\tableofcontents
+\end{frame}
+
+
+
+\section{Regularizations of collision in the two-body problem}
+%------------------------------------------------------------
+
+
+\begin{frame}{What does \textit{regularization} mean}
+\begin{minipage}{0.65\textheight}
+When approaching a binary collision in the $n$-body problem (here $n = 2$),
+the gravitational acceleration and the velocity of the colliding
+bodies tend to infinity. \\
+The Levi-Civita regularization ($1904$) transforms this singular
+motion into a smooth motion where all the variables remain finite,
+and which continues after the collision. This transformation couples a change of coordinates with a change of a time, as explained in the next proposition.
+\end{minipage}
+\begin{minipage}{0.5\textheight}
+\begin{figure}
+    \centering
+    \includegraphics[width=1.2\linewidth]{L-C.png}
+    \label{}
+\end{figure}
+\end{minipage}
+\end{frame}
+
+\begin{frame}{The map $z \to z^2$}
+    \begin{block}{Proposition}
+        Suppose the motion of a point in the complex plane is given by $z(\tau)$ and satisfies Hooke's law $z'' = -Cz$. Then a point following the trajectory $\omega(t(\tau)) = [z(t)]^2$, where $dt= |z|^2 d\tau$, moves according to Newton's law 
+        \[
+        \frac{d^2\omega}{dt^2} = - \tilde C\frac{\omega}{|\omega|^3},
+        \]
+        where $\tilde C = 2\left(|z'(0)|^2+C|z(0)|^2 \right)$
+    \end{block}
+    \begin{figure}[H]
+\centering
+  \includegraphics[width=0.55\textwidth]{Hooke-Newton.png}
+  \caption*{Effect of the transformation $z \to z^2$ on the Hooke ellipsis}
+\end{figure}
+\end{frame}
+%---------------------------------------------------------
+\section{Some insights on control theory}
+%---------------------------------------------------
+%---------------------------------------------------
+
+
+%--------------------------------------------------
+\begin{frame}{Setting}
+A controlled dynamical system is a smooth family of vector fields
+$
+f: M \times U \to TM
+$
+where $M$ is a smooth $n-$dimensional manifold, and $U \subset \mathbb{R}^m$ is the set of admissible controls. \\
+First question: is some final state $x_f$ accessible from some initial state $x_0$, i.e. does the system
+\[
+\dot x(t) = f\left(x(t),u(t)\right), \qquad u(t) \in U 
+\]
+\[
+x(0) = x_0, \qquad x(t_f) = x_f
+\]
+have a solution for some admissible control?
+The system is said to be \textit{controllable} if the answer is positive for all possible
+initial and final states $x_0, x_f \in M$.
+\begin{center}
+\begin{tikzpicture}[scale=1.2]
+
+  % Initial point
+  \filldraw[fill=blue!30] (0,0) circle (0.08) node[below left] {$x_0$};
+
+  % Reachable set (shaded ellipse)
+  \filldraw[fill=red!20, draw=red] (4,1) ellipse (0.8 and 0.5);
+
+  % Sample trajectories ending in the reachable set
+  \draw[thick,->,blue!60] (0,0) .. controls (1,1) and (3,1.5) .. (3.5,1.3);
+  \draw[thick,->,blue!60] (0,0) .. controls (1,0.5) and (3,0.5) .. (3.6,1);
+  \draw[thick,->,blue!60] (0,0) .. controls (1,-0.5) and (3,0.2) .. (4.3,1.0);
+
+\end{tikzpicture}
+\end{center}
+
+\end{frame}
+%---------------------------------------------------------
+\begin{frame}{Controllability}
+  \begin{block}{Theorem}
+Let $$\dot x= f_0(x) + \sum_{i=1}^{m}u_i f_i(x)$$ a controlled-affine system on a connected manifold, with $u = \left(u_1,\dots,u_m\right) \in U$. If
+\begin{itemize}
+    \item $f_0$ is periodic
+    \item The convex enveloppe of $U$ is a neighbourhood of the origin
+    \item $Lie_x\left\{f_0,\dots, f_m\right\} = T_xM$, $ x \in M$
+\end{itemize} 
+then the system is controllable.
+  \end{block}
+\end{frame}
+%---------------------------------------------------------
+\begin{frame}{\textit{Pontryagin maximum Principle} $(PMP)$}
+Let $\dot x = f(x,u), \quad \int_{0}^{t_f} L(x,u) \to$ min, defined on $M = \mathbb{R}^n$.
+\begin{block}{Theorem (Pontryagin et al.)}
+iIf $u$ is an optimal control on $[0,t_f]$, $t_f$ not fixed, with
+response $x$, then there exists an absolutely continuous covector function $p$, valued
+in $\left(\mathbb{R}^n \right)^* \setminus \left\{0\right\}$, and $p^0 \leq 0$ such that, with
+\[
+H(x,p, p^0,u) = \langle p, f(x,u) \rangle +p^0 L(x,u),
+\]
+almost everywhere in $[0,t_f]$,
+\begin{equation*}
+    \begin{split}
+        &\dot x = \frac{\partial H}{\partial p}(x,p,p^0,u), \quad \dot p = - \frac{\partial H}{\partial x}(x,p,p^0,u) \\
+        & H(x,p,p^0,u) = \max_{v \in U} H(x,p,p^0,v).
+    \end{split}
+\end{equation*}
+Morever, one has that $H = 0.$ a.e. in $[0,t_f]$.
+\end{block}
+\end{frame}
+
+%------------------------------------------------------------
+
+
+%------------------------------------------------------
+\section{Regularizations and control of collision orbits}
+%-----------------------------------------------------
+
+
+
+\begin{frame}{$PMP$ for the $1$-dimensional Kepler problem}
+%-----------------------------------------------------
+\begin{center} \centering
+\begin{tikzpicture}
+
+    % Draw the horizontal line
+    \draw[thick] (-2.5,0) -- (2.5,0);
+    
+    \draw[->] (-1,- 0.3) -- (-0.5, - 0.3);
+    
+    \node[below] at (-0.8,-0.3) {\small{$u = +1$}};
+   
+    % Draw the right-to-left arrow above the line
+    \draw[->] (1,0.3) -- (0.5,0.3);
+    % Label the arrow
+    \node[above] at (0.6,0.3) {\small $u = -1$};
+
+    % Define and label the first point (x_0, x'_0)
+    \fill (1,0) circle (2pt);
+    \node[below] at (1,0) {};
+
+    % Define and label the collision point with a sun-like shape
+    \draw[fill=yellow] (-1,0) circle (4pt);
+    \foreach \angle in {0,45,...,315} 
+        \draw[-] (-1,0) -- ++(\angle:6pt);
+    \node[above] at (-1,0.3) {};
+\end{tikzpicture}
+ \end{center}
+
+ The equations for the state variable $x > 0$ of the $PMP$ on the real line write as
+    \begin{equation*}
+            a)\,\,\ddot x = -\frac{1}{x^2}-1, \qquad b)\,\,\ddot x = -\frac{1}{x^2}+1
+    \end{equation*}
+
+depending on the sign of the covector $p_{x}$. The equations can be integrated by means of the -respectively- conserved quantity
+\[a) \,\,C_{-} = \frac{1}{2}\dot x^2 - \frac{1}{x} + x, \quad b)\,\, C_{+} = \frac{1}{2}\dot x^2 - \frac{1}{x} - x\] and the Sundman change of time $dt = xd\tau$, $x>0$ in terms of the Weierstrass elliptic function $\wp$.
+\end{frame}
+%-----------------------------------------------------------------------
+\begin{frame}{}
+  \begin{figure}
+    \centering
+
+    % Top subfigure
+    \begin{subfigure}[b]{\linewidth}
+      \centering
+      \includegraphics[width=0.7\linewidth, height=0.43\textheight]{C+.png}
+      \caption*{$(x,x')$ phase space of: Above, system with $u = -1$; below, system with $u = +1$}
+    \end{subfigure}
+
+    \vspace{0.01cm} % spacing between images
+
+    % Bottom subfigure
+    \begin{subfigure}[b]{\linewidth}
+      \centering
+      \includegraphics[width=0.7\linewidth, height=0.43\textheight]{C-.png}
+    \end{subfigure}
+
+  \end{figure} 
+\end{frame}
+
+
+%--------------------------------------------------------------------
+
+\begin{frame}{}
+To better understand the behavior of the control system, we need to regularize the whole system - and not just the extremals arising from the $PMP$. \\
+It turns out that the Levi-Civita regularization written in the real plane as $(q_1,q_2) = \left(\xi_1^2 - \xi_2^2, \, 2\xi_1 \xi_2\right)$ together with the change of time can be extended to the controlled system \[ \ddot q = - \frac{q}{|q|^3} + u\] $q \in \mathbb{R}^2, |u| \leq 1$ by giving the affine-controlled system \[ 
+x' = f_0(x) + u_1 f_1(x) + u_2 f_2(x)
+\] 
+where $x = \left(\xi_1, \xi_2, \eta_1, \eta_2, h \right) \in \mathbb{R}^5$,  and $f_0, f_1, f_2$ real-analytical vector fields defined on the $4-$dimensional manifold \[M = \{2|\eta|^2 +(-h)|\xi|^2 = 1 \} \subset \mathbb{R}^5\]
+$h$ be the energy of the non-controlled system.
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{}
+    Thanks to this change of - dependent and independent - variables, we can apply the thorem for the controllability to conclude that
+    \begin{block}{Theorem}
+        The planar controlled Kepler problem is everywhere controllable, whenever $h< 0,$ where $h(t) = \frac{1}{2}|\dot q|^2 - \frac{1}{|q|}$ is the varying energy of the non-controlled system.
+    \end{block}
+    Proof: By calculation, it turns out that $\mathrm{Lie}_x \left\{ f_0,f_1,f_2 \right\} = T_xM, \,\forall x \in M$ and the vector field $f_0$ is periodic whenever $h < 0$.
+\end{frame}
+
+%--------------------------------------------------------------
+
+\begin{frame}{Existence of optimal solutions}
+    The existence of an optimal couple trajectory - control $(x^*, u^*)$ which solves the regularized problem
+\[     x' = f_0(x) + u_1 f_1(x) + u_2 f_2(x), \qquad \int_0^{\tau_f} |\xi|^2d\tau \to \min      \] is guaranteed if a blow-up in finite time does not occour. But also by restricting to the one dimensional case, it turns out that the Weierstrass $\wp-$function has poles!
+\begin{block}{Proposition}
+    The existence of an optimal solution for the regularized Kepler problem is guaranteed only on the subset of $M$ defined by $h < 0$
+\end{block}
+\end{frame}
+
+%-------------------------------------------------------------
+
+\begin{frame}{}
+  \begin{figure}
+    \centering
+    % Top subfigure
+    \begin{subfigure}[b]{\linewidth}
+      \centering
+      \includegraphics[width=0.6\linewidth, height=0.43\textheight]{oscill_arm.pdf}
+      \caption*{Above, reparametrized system with $u = 0$. It is an harmonic oscillator;\\ below, original and new time $\tau$}
+    \end{subfigure}
+
+    \vspace{0.01cm} % spacing between images
+
+    % Bottom subfigure
+    \begin{subfigure}[b]{\linewidth}
+      \centering
+      \includegraphics[width=0.43\linewidth, height=0.43\textheight]{tempo_oscill_arm.pdf}
+    \end{subfigure}
+
+  \end{figure}     
+\end{frame}
+
+%---------------------------------------------------------------
+
+\begin{frame}{}
+What happens if we force the control so that $h'(\tau) \to \min$, i.e. $u = - \frac{\xi \xi'}{|\xi \xi'|}$
+
+    \centering
+    % --- Top row (2 subfigures) ---
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{pert_oscill_arm.pdf}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{u.pdf}
+    \end{minipage}
+
+    \vspace{1em}
+
+    % --- Bottom row (3 subfigures) ---
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{xi.pdf}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{x.pdf}
+    \end{minipage}
+\end{frame}
+
+%--------------------------------------------------------------
+
+\begin{frame}{}
+What happens if we force the control so that $h'(\tau) \to \max$, i.e. $u = \frac{\xi \xi'}{|\xi \xi'|}$... blow-up in finite time!
+
+    \centering
+    % --- Top row (2 subfigures) ---
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{blow_up.pdf}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{u_blow_up.pdf}
+    \end{minipage}
+
+    \vspace{1em}
+
+    % --- Bottom row (3 subfigures) ---
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{xi_blow-up.pdf}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{x_blow_up.pdf}
+    \end{minipage}
+\end{frame}
+
+%-----------------------------------------------------
+
+\begin{frame}{What we are working on}
+\begin{itemize}
+    \item Bound the system in the region $h < 0$, so that we have existence of optimal solutions
+    \item Solve the equations of the $PMP$ in the regular setting
+    \item Extend the results to the three-dimensional case
+\end{itemize}
+    
+\end{frame}
+
+\begin{frame}{}
+    \huge{thank you!}
+\end{frame}
+\end{document}
