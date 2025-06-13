@@ -17,6 +17,10 @@
 \usepackage{mathtools}
 \usepackage{amsfonts}
 \usepackage{animate}
+\usepackage{comment}
+\usepackage{xcolor}
+
+\definecolor{mygreen}{RGB}{0,150,0}
 %\setbeamertemplate{caption}[numbered]
 \beamertemplatenavigationsymbolsempty
 %\setbeamercolor{block title alerted}{fg=white,bg=blue!70!black}
@@ -123,7 +127,7 @@ the gravitational acceleration and the velocity of the colliding
 bodies tend to infinity. \\
 The Levi-Civita regularization ($1904$) transforms this singular
 motion into a smooth motion where all the variables remain finite,
-and which continues after the collision. This transformation couples a change of coordinates with a change of a time, as explained in the next proposition.
+and which continues after the collision. This transformation couples the change of coordinates given by the singular map $z \mapsto z^2$ with a change of a time.
 \end{minipage}
 \begin{minipage}{0.5\textheight}
 \begin{figure}
@@ -136,7 +140,7 @@ and which continues after the collision. This transformation couples a change of
 
 \begin{frame}{The map $z \to z^2$}
     \begin{block}{Proposition}
-        Suppose the motion of a point in the complex plane is given by $z(\tau)$ and satisfies Hooke's law $z'' = -Cz$. Then a point following the trajectory $\omega(t(\tau)) = [z(t)]^2$, where $dt= |z|^2 d\tau$, moves according to Newton's law 
+        Suppose the motion of a point in the complex plane is given by $z(\tau)$ and satisfies Hooke's law $z'' = -Cz$. Then a point following the trajectory $\omega(t(\tau)) = [z(\tau)]^2$, where $dt= |\omega| d\tau =|z|^2 d\tau$, moves according to Newton's law 
         \[
         \frac{d^2\omega}{dt^2} = - \tilde C\frac{\omega}{|\omega|^3},
         \]
@@ -206,8 +210,8 @@ then the system is controllable.
 Let $\dot x = f(x,u), \quad \int_{0}^{t_f} L(x,u) \to$ min, defined on $M = \mathbb{R}^n$.
 \begin{block}{Theorem (Pontryagin et al.)}
 iIf $u$ is an optimal control on $[0,t_f]$, $t_f$ not fixed, with
-response $x$, then there exists an absolutely continuous covector function $p$, valued
-in $\left(\mathbb{R}^n \right)^* \setminus \left\{0\right\}$, and $p^0 \leq 0$ such that, with
+response $x$, then there exists an absolutely continuous covector function $p$ valued
+in $\left(\mathbb{R}^n \right)^*$ and $p^0 \leq 0$, not both zero, such that, with
 \[
 H(x,p, p^0,u) = \langle p, f(x,u) \rangle +p^0 L(x,u),
 \]
@@ -229,78 +233,77 @@ Morever, one has that $H = 0.$ a.e. in $[0,t_f]$.
 \section{Regularizations and control of collision orbits}
 %-----------------------------------------------------
 
-
+%-----------------------------------------------------
 
 \begin{frame}{$PMP$ for the $1$-dimensional Kepler problem}
-%-----------------------------------------------------
-\begin{center} \centering
+\begin{minipage}{0.99\textwidth}
+ \[\ddot q = - \frac{q}{|q|^3}+u \qquad \fbox{Controlled-Kepler Problem}\]
+
+The equations arising from the Hamiltonian of the PMP restricted to collision orbits are $\ddot q = -q^{-2} \pm 1 \quad q \in \mathbb{R}_{>0}$, which are integrable in the new time $\tau$, where $d \tau = 1/qdt$ in terms of the Weierstrass $\wp-$function and so well-defined at collision.
+\end{minipage}
+
+  \vspace{0.6em}
+
+    \begin{minipage}{0.48\textwidth}
+        \centering
+       \fbox{control $u = -1$}
+        \includegraphics[width=0.8\linewidth, height=0.3\textheight]{C+.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \fbox{control $u = +1$}
+        \includegraphics[width=0.8\linewidth, height=0.3\textheight]{C-.png}
+    \end{minipage}
+  \vspace{0.6em}
+
+
+\begin{minipage}{0.99\textwidth}
+   \centering
 \begin{tikzpicture}
 
     % Draw the horizontal line
-    \draw[thick] (-2.5,0) -- (2.5,0);
+    \draw[thick] (-4.5,0) -- (4.5,0);
     
-    \draw[->] (-1,- 0.3) -- (-0.5, - 0.3);
+    \draw[->] (1,-0.3) -- (1.5, -0.3);
     
-    \node[below] at (-0.8,-0.3) {\small{$u = +1$}};
+    \node[right] at (1.4,-0.3) {\small{\textcolor{mygreen}{$u = +1$}}};
    
     % Draw the right-to-left arrow above the line
     \draw[->] (1,0.3) -- (0.5,0.3);
     % Label the arrow
-    \node[above] at (0.6,0.3) {\small $u = -1$};
+    \node[left] at (0.6,0.3) {\small{\textcolor{blue}{$u = -1$}}};
 
     % Define and label the first point (x_0, x'_0)
     \fill (1,0) circle (2pt);
-    \node[below] at (1,0) {};
 
     % Define and label the collision point with a sun-like shape
-    \draw[fill=yellow] (-1,0) circle (4pt);
-    \foreach \angle in {0,45,...,315} 
-        \draw[-] (-1,0) -- ++(\angle:6pt);
-    \node[above] at (-1,0.3) {};
+    \draw[fill=yellow] (-2,0) circle (4pt);
+    %\foreach \angle in {0,45,...,315} 
+    %    \draw[-] (-1,0) -- ++(\angle:6pt);
+    %\node[above] at (-1,0.3) {};
 \end{tikzpicture}
- \end{center}
+\end{minipage}
 
- The equations for the state variable $x > 0$ of the $PMP$ on the real line write as
-    \begin{equation*}
-            a)\,\,\ddot x = -\frac{1}{x^2}-1, \qquad b)\,\,\ddot x = -\frac{1}{x^2}+1
-    \end{equation*}
+%The equations for the state variable $x > 0$ of the $PMP$ on the real %line write as
+%    \begin{equation*}
+%            a)\,\,\ddot x = -\frac{1}{x^2}-1, \qquad b)\,\,\ddot x = -%\frac{1}{x^2}+1
+%    \end{equation*}
 
-depending on the sign of the covector $p_{x}$. The equations can be integrated by means of the -respectively- conserved quantity
-\[a) \,\,C_{-} = \frac{1}{2}\dot x^2 - \frac{1}{x} + x, \quad b)\,\, C_{+} = \frac{1}{2}\dot x^2 - \frac{1}{x} - x\] and the Sundman change of time $dt = xd\tau$, $x>0$ in terms of the Weierstrass elliptic function $\wp$.
+%depending on the sign of the covector $p_{x}$. The equations can be %integrated by means of the -respectively- conserved quantity
+%\[a) \,\,C_{-} = \frac{1}{2}\dot x^2 - \frac{1}{x} + x, \quad b)\,\, %C_{+} = \frac{1}{2}\dot x^2 - \frac{1}{x} - x\] and the Sundman change of time $dt = xd\tau$, $x>0$ in terms of the Weierstrass elliptic function $\wp$.
 \end{frame}
-%-----------------------------------------------------------------------
-\begin{frame}{}
-  \begin{figure}
-    \centering
-
-    % Top subfigure
-    \begin{subfigure}[b]{\linewidth}
-      \centering
-      \includegraphics[width=0.7\linewidth, height=0.43\textheight]{C+.png}
-      \caption*{$(x,x')$ phase space of: Above, system with $u = -1$; below, system with $u = +1$}
-    \end{subfigure}
-
-    \vspace{0.01cm} % spacing between images
-
-    % Bottom subfigure
-    \begin{subfigure}[b]{\linewidth}
-      \centering
-      \includegraphics[width=0.7\linewidth, height=0.43\textheight]{C-.png}
-    \end{subfigure}
-
-  \end{figure} 
-\end{frame}
-
 
 %--------------------------------------------------------------------
 
 \begin{frame}{}
-To better understand the behavior of the control system, we need to regularize the whole system - and not just the extremals arising from the $PMP$. \\
-It turns out that the Levi-Civita regularization written in the real plane as $(q_1,q_2) = \left(\xi_1^2 - \xi_2^2, \, 2\xi_1 \xi_2\right)$ together with the change of time can be extended to the controlled system \[ \ddot q = - \frac{q}{|q|^3} + u\] $q \in \mathbb{R}^2, |u| \leq 1$ by giving the affine-controlled system \[ 
+To really understand the behavior of the control system, we need to regularize the whole system - and not just the extremals arising from the $PMP$. \\
+The Levi-Civita regularization written in the real plane as $(q_1,q_2) = \left(\xi_1^2 - \xi_2^2, \, 2\xi_1 \xi_2\right)$ together with the change of time $d\tau = 1 \textfractionsolidus
+ |\xi|^2dt$ can be extended to the controlled system \[ \ddot q = - \frac{q}{|q|^3} + u\] $q \in \mathbb{R}^2, |u| \leq 1$ by giving the controlled-affined system \[ 
 x' = f_0(x) + u_1 f_1(x) + u_2 f_2(x)
 \] 
 where $x = \left(\xi_1, \xi_2, \eta_1, \eta_2, h \right) \in \mathbb{R}^5$,  and $f_0, f_1, f_2$ real-analytical vector fields defined on the $4-$dimensional manifold \[M = \{2|\eta|^2 +(-h)|\xi|^2 = 1 \} \subset \mathbb{R}^5\]
-$h$ be the energy of the non-controlled system.
+$h := \frac{1}{2}|\dot q|^2 - \frac{1}{|q|}$ be the energy of the non-controlled system.
 \end{frame}
 %-------------------------------------------------------------
 \begin{frame}{}
@@ -314,54 +317,31 @@ $h$ be the energy of the non-controlled system.
 %--------------------------------------------------------------
 
 \begin{frame}{Existence of optimal solutions}
-    The existence of an optimal couple trajectory - control $(x^*, u^*)$ which solves the regularized problem
-\[     x' = f_0(x) + u_1 f_1(x) + u_2 f_2(x), \qquad \int_0^{\tau_f} |\xi|^2d\tau \to \min      \] is guaranteed if a blow-up in finite time does not occour. But also by restricting to the one dimensional case, it turns out that the Weierstrass $\wp-$function has poles!
-\begin{block}{Proposition}
+   The application of the $PMP$ requires verifying the existence of an optimal solution of the regularized system.  The existence of an optimal couple trajectory - control $(x^*, u^*)$ which solves the regularized problem
+\[     x' = f_0(x) + u_1 f_1(x) + u_2 f_2(x), \qquad t_f = \int_0^{\tau_f} |\xi|^2d\tau \to \min      \] is guaranteed if a blow-up in finite time does not occur for \textbf{every} choice of admissible controls. But also by restricting to the one dimensional case, the Weierstrass $\wp-$function has poles!
+\begin{block}{Conjecture}
     The existence of an optimal solution for the regularized Kepler problem is guaranteed only on the subset of $M$ defined by $h < 0$
 \end{block}
 \end{frame}
 
-%-------------------------------------------------------------
-
-\begin{frame}{}
-  \begin{figure}
-    \centering
-    % Top subfigure
-    \begin{subfigure}[b]{\linewidth}
-      \centering
-      \includegraphics[width=0.6\linewidth, height=0.43\textheight]{oscill_arm.pdf}
-      \caption*{Above, reparametrized system with $u = 0$. It is an harmonic oscillator;\\ below, original and new time $\tau$}
-    \end{subfigure}
-
-    \vspace{0.01cm} % spacing between images
-
-    % Bottom subfigure
-    \begin{subfigure}[b]{\linewidth}
-      \centering
-      \includegraphics[width=0.43\linewidth, height=0.43\textheight]{tempo_oscill_arm.pdf}
-    \end{subfigure}
-
-  \end{figure}     
-\end{frame}
-
 %---------------------------------------------------------------
 
-\begin{frame}{}
-What happens if we force the control so that $h'(\tau) \to \min$, i.e. $u = - \frac{\xi \xi'}{|\xi \xi'|}$
+\begin{frame}{Landing on earth}
+We force the control so that $h'(\tau) \to \min$, i.e. $u = - \frac{\xi \xi'}{|\xi \xi'|}$
 
     \centering
     % --- Top row (2 subfigures) ---
-    \begin{minipage}{0.48\textwidth}
+    \begin{minipage}{0.44\textwidth}
         \centering
         \includegraphics[width=\linewidth]{pert_oscill_arm.pdf}
     \end{minipage}
     \hfill
-    \begin{minipage}{0.48\textwidth}
+    \begin{minipage}{0.44\textwidth}
         \centering
         \includegraphics[width=\linewidth]{u.pdf}
     \end{minipage}
 
-    \vspace{1em}
+    \vspace{0.6em}
 
     % --- Bottom row (3 subfigures) ---
     \begin{minipage}{0.48\textwidth}
@@ -377,12 +357,12 @@ What happens if we force the control so that $h'(\tau) \to \min$, i.e. $u = - \f
 
 %--------------------------------------------------------------
 
-\begin{frame}{}
-What happens if we force the control so that $h'(\tau) \to \max$, i.e. $u = \frac{\xi \xi'}{|\xi \xi'|}$... blow-up in finite time!
+\begin{frame}{Using the 'black hole' to blow-up the spacecraft}
+We force the control so that $h'(\tau) \to \max$, i.e. $u = \frac{\xi \xi'}{|\xi \xi'|}$... blow-up!
 
     \centering
     % --- Top row (2 subfigures) ---
-    \begin{minipage}{0.48\textwidth}
+    \begin{minipage}{0.44\textwidth}
         \centering
         \includegraphics[width=\linewidth]{blow_up.pdf}
     \end{minipage}
@@ -395,7 +375,7 @@ What happens if we force the control so that $h'(\tau) \to \max$, i.e. $u = \fra
     \vspace{1em}
 
     % --- Bottom row (3 subfigures) ---
-    \begin{minipage}{0.48\textwidth}
+    \begin{minipage}{0.44\textwidth}
         \centering
         \includegraphics[width=\linewidth]{xi_blow-up.pdf}
     \end{minipage}
@@ -410,8 +390,9 @@ What happens if we force the control so that $h'(\tau) \to \max$, i.e. $u = \fra
 
 \begin{frame}{What we are working on}
 \begin{itemize}
-    \item Bound the system in the region $h < 0$, so that we have existence of optimal solutions
+    \item Bound the system in the region $h < 0$, so that existence of optimal solutions is guaranteed
     \item Solve the equations of the $PMP$ in the regular setting
+    \item compute the feedback $u$ (when we need to switch?)
     \item Extend the results to the three-dimensional case
 \end{itemize}
     
